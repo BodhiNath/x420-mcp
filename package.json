@@ -1,0 +1,58 @@
+{
+  "name": "x420-mcp",
+  "version": "1.0.2",
+  "description": "MCP server for X420's pay-per-call agent services (x402, USDC on Base, paid from your own wallet).",
+  "mcpName": "com.signature-theme/x420-mcp",
+  "type": "module",
+  "license": "MIT",
+  "author": "BodhiNath",
+  "homepage": "https://signature-theme.com",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BodhiNath/x420-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BodhiNath/x420-mcp/issues"
+  },
+  "keywords": [
+    "mcp",
+    "x402",
+    "agent",
+    "usdc",
+    "base",
+    "pay-per-call"
+  ],
+  "bin": {
+    "x420-mcp": "./dist/cli.js"
+  },
+  "main": "./dist/server.js",
+  "exports": {
+    ".": "./dist/server.js",
+    "./hosted": "./dist/hosted.js",
+    "./catalog": "./dist/catalog.js",
+    "./pay": "./dist/pay.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "@x402/core": "2.31.0",
+    "@x402/evm": "2.31.0",
+    "@x402/fetch": "2.31.0",
+    "viem": "2.57.16",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "24.3.0",
+    "typescript": "5.9.2"
+  }
+}
