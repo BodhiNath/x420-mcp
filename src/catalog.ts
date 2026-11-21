@@ -28,6 +28,7 @@ export type ToolInputSchema = {
 };
 export interface ServiceTool { name: string; service: CatalogService; description: string; inputSchema: ToolInputSchema }
 
+export function fmtUsd(n: number): string { const s = n.toFixed(4).replace(/0+$/, ""); const [i, d = ""] = s.split("."); return `$${i}.${d.padEnd(2, "0")}`; }
 export const TOOL_PREFIX = "x420_";
 /** `sitescan.check` -> `x420_sitescan_check`; anything outside the MCP tool-name alphabet also becomes `_`. */
 export const toolName = (id: string): string => TOOL_PREFIX + id.replace(/\./g, "_").replace(/[^A-Za-z0-9_-]/g, "_");
@@ -67,7 +68,7 @@ export function serviceTool(s: CatalogService): ServiceTool {
   }
   const price = Number(s.price_usd) || 0;
   const cost = price > 0
-    ? `PAID: $${price.toFixed(2)} USDC per call, settled on Base via x402 from the wallet in X420_MCP_WALLET_PRIVATE_KEY (real money).`
+    ? `PAID: ${fmtUsd(price)} USDC per call, settled on Base via x402 from the wallet in X420_MCP_WALLET_PRIVATE_KEY (real money).`
     : "Free call.";
   const example = s.examples?.input ? ` Example input: ${JSON.stringify(s.examples.input)}.` : "";
   const capNote = price > DEFAULT_MAX_USD ? ` Above the default $${DEFAULT_MAX_USD.toFixed(2)} per-call cap: refused until ${MAX_ENV}=${Math.ceil(price)} (or higher) is set in the MCP server's environment.` : "";

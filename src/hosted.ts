@@ -13,7 +13,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
 import { CallToolRequestSchema, ListToolsRequestSchema, type CallToolResult, type Tool } from "@modelcontextprotocol/sdk/types.js";
-import { fetchAgentCardPayments, fetchCatalog, serviceTool, trimOrigin, type Catalog, type Payments, type ServiceTool } from "./catalog.js";
+import { fetchAgentCardPayments, fetchCatalog, serviceTool, trimOrigin, type Catalog, type Payments, type ServiceTool, fmtUsd } from "./catalog.js";
 import { DEFAULT_MAX_USD, MAX_ENV } from "./pay.js";
 import { CATALOG_TOOL, callFreeTool, freeTools, missingInputResult, serviceRequest, text } from "./tools.js";
 
@@ -43,7 +43,7 @@ export function hostedDescription(t: ServiceTool): string {
   const s = t.service;
   const price = Number(s.price_usd) || 0;
   const capNote = price > DEFAULT_MAX_USD ? ` Note: the local x420-mcp refuses this service above its default $${DEFAULT_MAX_USD.toFixed(2)} per-call cap; set ${MAX_ENV}=${Math.ceil(price)} there to allow it.` : "";
-  return `${s.name}: ${s.description} Price: $${price.toFixed(2)} USDC per call (x402 on Base). This hosted tool does NOT pay and does NOT return the deliverable: it validates the input and returns payment instructions (pay_to, network, price and the x402 URL to pay at). ${PAY_HOW} Deliverable once paid: ${s.output ?? "JSON"}.${capNote}`;
+  return `${s.name}: ${s.description} Price: ${fmtUsd(price)} USDC per call (x402 on Base). This hosted tool does NOT pay and does NOT return the deliverable: it validates the input and returns payment instructions (pay_to, network, price and the x402 URL to pay at). ${PAY_HOW} Deliverable once paid: ${s.output ?? "JSON"}.${capNote}`;
 }
 
 interface Snapshot { at: number; catalog: Catalog; payments: Payments; tools: Tool[]; serviceTools: Map<string, ServiceTool> }

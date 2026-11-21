@@ -10,7 +10,7 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema, type CallToolResult, type Tool } from "@modelcontextprotocol/sdk/types.js";
-import { fetchAgentCardPayments, fetchCatalog, serviceTool, trimOrigin, type Catalog, type ServiceTool } from "./catalog.js";
+import { fetchAgentCardPayments, fetchCatalog, serviceTool, trimOrigin, type Catalog, type ServiceTool, fmtUsd } from "./catalog.js";
 import { DEFAULT_MAX_DAILY_USD, DEFAULT_MAX_TOTAL_USD, MAX_DAILY_ENV, MAX_TOTAL_ENV, SpendLedger, capRefusalMessage } from "./ledger.js";
 import { DEFAULT_MAX_USD, DEFAULT_NETWORK, DEFAULT_ORIGIN, KEY_ENV, MAX_ENV, NETWORK_ENV, ORIGIN_ENV, createX402Payer, isPrivateKey, missingKeyMessage, readBody, unverifiedPayToMessage, type PayFn } from "./pay.js";
 import { CATALOG_TOOL, QUOTE_TOOL, callFreeTool, freeTools, missingInputResult, serviceRequest, text } from "./tools.js";
@@ -18,7 +18,7 @@ import { CATALOG_TOOL, QUOTE_TOOL, callFreeTool, freeTools, missingInputResult, 
 export { CATALOG_TOOL, QUOTE_TOOL };
 export const SPEND_TOOL = "x420_spend_summary";
 export const SERVER_NAME = "x420-mcp";
-export const SERVER_VERSION = "1.0.1";
+export const SERVER_VERSION = "1.0.2";
 
 export interface X420McpOptions {
   origin?: string;
@@ -138,7 +138,7 @@ export async function createX420McpServer(opts: X420McpOptions = {}): Promise<X4
   async function callService(t: ServiceTool, args: Record<string, unknown>): Promise<CallToolResult> {
     const s = t.service;
     const price = Number(s.price_usd) || 0;
-    if (price > maxUsd) return text(`refused: ${s.id} costs $${price.toFixed(2)} USDC per call, above the per-call cap ${MAX_ENV}=$${maxUsd.toFixed(2)}. Set ${MAX_ENV}=${Math.ceil(price)} (or higher) in the MCP server's environment and restart it only if you mean to spend that much per call.`, true);
+    if (price > maxUsd) return text(`refused: ${s.id} costs ${fmtUsd(price)} USDC per call, above the per-call cap ${MAX_ENV}=$${maxUsd.toFixed(2)}. Set ${MAX_ENV}=${Math.ceil(price)} (or higher) in the MCP server's environment and restart it only if you mean to spend that much per call.`, true);
     const request = serviceRequest(origin, t, args);
     if ("missing" in request) return missingInputResult(t, request.missing);
     const { url } = request;

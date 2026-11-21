@@ -1,6 +1,6 @@
 {
   "name": "x420-mcp",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "MCP server for X420's pay-per-call agent services (x402, USDC on Base, paid from your own wallet).",
   "mcpName": "com.signature-theme/x420-mcp",
   "type": "module",
